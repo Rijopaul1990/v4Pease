@@ -160,7 +160,27 @@
      document.querySelector('#choices-multiple-remove-button').addEventListener('change', function () {
     const selected = Array.from(this.selectedOptions).map(opt => opt.value);
     const totalHours = calculateTotalHours(selected);
-    document.getElementById('proceed-btn').textContent = `${totalHours}h Proceed`;
+    
+    var counsellorId = $('#councellor_drop').val();
+
+    if (!counsellorId) {
+        alert("Please select a counsellor first.");
+        return;
+    }
+    $.ajax({
+            url: '/admin/get-final-amount', // Laravel route
+            type: 'POST',
+            data: {
+                counsellor_id: counsellorId,
+                totalHours: totalHours,
+                _token: $('meta[name="csrf-token"]').attr('content') // CSRF token
+            },
+            success: function (response) {
+                $('#totalHour').val(totalHours);
+                $('#totalPrice').val(response);
+                document.getElementById('proceed-btn').textContent = `${response}$ Proceed to Payment...`;
+            }
+        });
 });
 
 function calculateTotalHours(selectedTimes) {

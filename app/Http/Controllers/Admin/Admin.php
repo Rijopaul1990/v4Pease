@@ -205,4 +205,16 @@ public function getTimeSlots(Request $request)
         return back()->with('success', 'Price setting saved successfully.');
     }
 
+    public function getFinalAmount(Request $request){
+        $counsellorId = $request->input('counsellor_id');
+        $selDate      = $request->input('totalHours');
+        $pricePerHour = PriceSettings::where('councellor_id', $counsellorId)->value('price_per_hour');
+
+        $totalAmount = $pricePerHour ? $pricePerHour * $selDate  : 0;
+
+        return $totalAmount;
+    }
+
+    
+
 }

@@ -19,8 +19,8 @@
     </div>
 </section>
 <div class="container mt-5 mb-5">
-  <form action="/action_page.php">
-
+  <form action="{{ url('/saveBookingData') }}" method="POST">
+@csrf 
 
     <div class="form-row">
       
@@ -106,12 +106,13 @@
 
 
     
-    
+    <input type="hidden" value="" id="totalHour" name="totalHour"/>
+    <input type="hidden" value="" id="totalPrice" name="totalPrice"/>
 
     <!-- Second Row: Submit -->
     <div class="form-row">
       <div class="col-md-12 text-center">
-        <button type="submit" id="proceed-btn" class="btn btn-success px-5"><span>20$</span> Proceed</button>
+        <button type="submit" id="proceed-btn" class="btn btn-success px-5"><span>0$</span> </button>
       </div>
     </div>
 

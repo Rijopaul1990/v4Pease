@@ -176,9 +176,9 @@
                     <i class="mdi mdi-logout text-danger"></i>
                 </div>
                 </div>
-                <div class="preview-item-content">
-                <p class="preview-subject mb-1">Log out</p>
-                </div>
+                <div class="preview-item-content" onclick="window.location='{{ route('logout') }}'" style="cursor: pointer;">
+    <p class="preview-subject mb-1">Log out</p>
+</div>
             </a>
             <div class="dropdown-divider"></div>
             <p class="p-3 mb-0 text-center">Advanced settings</p>

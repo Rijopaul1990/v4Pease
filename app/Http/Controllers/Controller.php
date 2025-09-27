@@ -21,7 +21,9 @@ class Controller extends BaseController
         return view('slotBooking', $data);
     }
 
-    
+    public function saveBookingData(Request $request){
+        dd($request->post());
+    }
 
 }
 

@@ -29,26 +29,51 @@
 
                             <div class="form-group">
                                 <label for="counsellor_qualification">Qualification</label>
-                                <input type="text" name="counsellor_qualification" class="form-control" id="counsellor_qualification" placeholder="Qualification" required>
+                                <input type="text" name="counsellor_qualification" class="form-control" id="counsellor_qualification" placeholder="e.g., MSW, MBA, UGC-NET, Ph.D" required>
                             </div>
 
                             <div class="form-group">
-                                <label for="insta_link">Instagram</label>
-                                <input type="url" name="insta_link" class="form-control" id="insta_link" placeholder="Instagram Link">
+                                <label for="designation">Designation</label>
+                                <input type="text" name="designation" class="form-control" id="designation" placeholder="e.g., Senior Counsellor">
                             </div>
 
                             <div class="form-group">
-                                <label for="fb_link">Facebook</label>
-                                <input type="url" name="fb_link" class="form-control" id="fb_link" placeholder="Facebook Link">
+                                <label for="bio">Bio / About</label>
+                                <textarea name="bio" class="form-control" id="bio" rows="4" placeholder="Short description shown on the counsellor page..."></textarea>
                             </div>
 
                             <div class="form-group">
-                                <label for="twitter_link">Twitter</label>
-                                <input type="url" name="twitter_link" class="form-control" id="twitter_link" placeholder="Twitter Link">
+                                <label for="email">Email</label>
+                                <input type="email" name="email" class="form-control" id="email" placeholder="Email address">
                             </div>
 
                             <div class="form-group">
-                                <label>File upload</label>
+                                <label for="phone">Phone</label>
+                                <input type="text" name="phone" class="form-control" id="phone" placeholder="Phone number">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="insta_link">Instagram <small class="text-muted">(optional)</small></label>
+                                <input type="text" name="insta_link" class="form-control" id="insta_link" placeholder="Instagram Link">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fb_link">Facebook <small class="text-muted">(optional)</small></label>
+                                <input type="text" name="fb_link" class="form-control" id="fb_link" placeholder="Facebook Link">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="twitter_link">Twitter <small class="text-muted">(optional)</small></label>
+                                <input type="text" name="twitter_link" class="form-control" id="twitter_link" placeholder="Twitter Link">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="google_link">Google <small class="text-muted">(optional)</small></label>
+                                <input type="text" name="google_link" class="form-control" id="google_link" placeholder="Google Link">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Photo</label>
                                 <input type="file" name="photo" class="form-control">
                             </div>
 

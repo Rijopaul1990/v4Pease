@@ -20,6 +20,7 @@ class CreatePaymentsTable extends Migration
             $table->string('phone');
             $table->decimal('amount', 10, 2);
             $table->string('razorpay_payment_id')->nullable();
+            $table->string('razorpay_signature')->nullable();
             $table->string('order_id')->nullable();
             $table->boolean('status')->default(0); // 0 = Pending, 1 = Success
             $table->timestamps();

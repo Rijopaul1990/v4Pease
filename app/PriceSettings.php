@@ -10,6 +10,8 @@ class PriceSettings extends Model
     protected $primaryKey = 'price_id';
     protected $fillable = [
         'councellor_id',
+        'candidate_type',
+        'child_age_limit',
         'price_per_hour',
     ];
     public $timestamps = false;

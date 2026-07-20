@@ -1,2 +1,13 @@
 User-agent: *
-Disallow:
+Allow: /
+
+# Private / transactional paths — keep out of search results
+Disallow: /admin
+Disallow: /login
+Disallow: /saveBookingData
+Disallow: /payment
+Disallow: /success
+Disallow: /failure
+Disallow: /checkout
+
+Sitemap: https://v4peace.com/sitemap.xml

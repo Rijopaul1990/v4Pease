@@ -12,8 +12,8 @@
                 <span class="count bg-success"></span>
             </div>
             <div class="profile-name">
-                <h5 class="mb-0 font-weight-normal">Henry Klein</h5>
-                <span>Gold Member</span>
+                <h5 class="mb-0 font-weight-normal">Dr. Jince George</h5>
+                <span>Admin</span>
             </div>
             </div>
             <a href="#" id="profile-dropdown" data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
@@ -65,6 +65,14 @@
         </a>
         </li>
         <li class="nav-item menu-items">
+        <a class="nav-link" href="<?= url('/admin/bookings');?>">
+            <span class="menu-icon">
+            <i class="mdi mdi-calendar-check"></i>
+            </span>
+            <span class="menu-title">All Bookings</span>
+        </a>
+        </li>
+        <li class="nav-item menu-items">
         <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
             <span class="menu-icon">
             <i class="mdi mdi-laptop"></i>
@@ -74,8 +82,13 @@
         </a>
         <div class="collapse" id="ui-basic">
             <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="<?= url('/admin/addcouncelor');?>">Councelor Page</a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/ui-features/dropdowns.html">Blog Page</a></li>
+                <li class="nav-item"> <a class="nav-link" href="<?= url('/admin/addcouncelor');?>">Add Councelor</a></li>
+                <li class="nav-item"> <a class="nav-link" href="<?= url('/admin/viewCounsellors');?>">View/Manage Counsellors</a></li>
+                <li class="nav-item"> <a class="nav-link" href="<?= url('/admin/addBlog');?>">Blog Page</a></li>
+                <li class="nav-item"> <a class="nav-link" href="<?= url('/admin/viewBlogs');?>">View/Manage Blogs</a></li>
+                <li class="nav-item"> <a class="nav-link" href="<?= url('/admin/addSocialPost');?>">Add Social Post</a></li>
+                <li class="nav-item"> <a class="nav-link" href="<?= url('/admin/viewSocialPosts');?>">View/Manage Social Posts</a></li>
+                <li class="nav-item"> <a class="nav-link" href="<?= url('/admin/careerApplications');?>">Career Applications</a></li>
                 <li class="nav-item"> <a class="nav-link" href="<?= url('/admin/addTime');?>">Time Settings</a></li>
                 <li class="nav-item"> <a class="nav-link" href="<?= url('/admin/priceSettings');?>">Price Settings</a></li>
             </ul>

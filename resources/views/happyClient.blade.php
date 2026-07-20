@@ -1,5 +1,5 @@
 <section class="ftco-section testimony-section">
-    <div class="img img-bg border" style="background-image: url(images/bg_4.jpg);"></div>
+    <div class="img img-bg border" style="background-image: url(images/happy_client_5.png);"></div>
     <div class="overlay"></div>
     <div class="container">
     <div class="row justify-content-center mb-5">
@@ -17,10 +17,10 @@
                 <div class="text">
                 <p class="mb-4">The career counselling session gave me clarity and confidence to choose the right path for my future.</p>
                 <div class="d-flex align-items-center">
-                    <div class="user-img" style="background-image: url(images/person_1.jpg)"></div>
+                    <div class="user-img" style="background-image: url(images/happy_client_1.png)"></div>
                     <div class="pl-3">
-                        <p class="name">Roger Scott</p>
-                        <span class="position">Marketing Manager</span>
+                        <p class="name">Kate Anna Philip</p>
+                        <span class="position">Sales Professional</span>
                         </div>
                     </div>
                 </div>
@@ -32,10 +32,10 @@
                 <div class="text">
                 <p class="mb-4">Your sessions helped us improve communication and rebuild trust in our relationship.</p>
                 <div class="d-flex align-items-center">
-                    <div class="user-img" style="background-image: url(images/person_2.jpg)"></div>
+                    <div class="user-img" style="background-image: url(images/happy_client_2.png)"></div>
                     <div class="pl-3">
-                        <p class="name">Roger Scott</p>
-                        <span class="position">Marketing Manager</span>
+                        <p class="name">Clair Juan</p>
+                        <span class="position">IT Professional</span>
                         </div>
                     </div>
                 </div>
@@ -47,10 +47,10 @@
                 <div class="text">
                 <p class="mb-4">The counselling support helped me overcome workplace stress and significantly boosted my productivity.</p>
                 <div class="d-flex align-items-center">
-                    <div class="user-img" style="background-image: url(images/person_3.jpg)"></div>
+                    <div class="user-img" style="background-image: url(images/happy_client_3.png)"></div>
                     <div class="pl-3">
-                        <p class="name">Roger Scott</p>
-                        <span class="position">Marketing Manager</span>
+                        <p class="name">Reva Stevenson</p>
+                        <span class="position">Banking Professional</span>
                         </div>
                     </div>
                 </div>

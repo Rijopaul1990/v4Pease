@@ -57,9 +57,22 @@
     content: ""; position: absolute; left: 0.75rem; right: 0.75rem; bottom: 6px;
     height: 2px; background: #7b4a4a; border-radius: 2px;
   }
+  /* Mobile menu toggler ("MENU") — brand colour so it's visible on the light navbar */
+  #ftco-navbar .navbar-toggler {
+    color: #7b4a4a !important;
+    border: 1px solid rgba(123, 74, 74, 0.4) !important;
+    border-radius: 6px;
+    padding: 6px 12px;
+  }
+  #ftco-navbar .navbar-toggler .oi { color: #7b4a4a !important; }
+
   @media (max-width: 991.98px) {
     #ftco-navbar .navbar-nav > .nav-item.active > .nav-link:after { display: none; }
-    #ftco-navbar .navbar-nav > .nav-item.active > .nav-link { color: #7b4a4a !important; }
+    /* Menu tabs dark for readability on the light dropdown; active/hover in brand */
+    #ftco-navbar .navbar-nav > .nav-item > .nav-link { color: #3b2626 !important; font-weight: 500; padding: 10px 0; }
+    #ftco-navbar .navbar-nav > .nav-item.active > .nav-link,
+    #ftco-navbar .navbar-nav > .nav-item > .nav-link:hover { color: #7b4a4a !important; font-weight: 600; }
+    #ftco-navbar .navbar-nav > .nav-item { border-top: 1px solid rgba(123, 74, 74, 0.1); }
   }
 
   /* IP-based country flag in the top bar */

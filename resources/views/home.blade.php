@@ -58,6 +58,18 @@
             <span class="hero-stat-label">Online Access</span>
           </div>
         </div>
+
+        <!-- Accreditation badges — inline version for mobile/tablet -->
+        <div class="hero-cert-inline d-flex d-lg-none">
+          <div class="hero-cert" title="Government Approved">
+            <span class="hero-cert-badge"><img src="{{ asset('images/GOVERNMENT_badge.png') }}" alt="Government Approved — V4Peace Counselling Centre"></span>
+            <span class="hero-cert-label">Government<br>Approved</span>
+          </div>
+          <div class="hero-cert" title="ISO 9001:2015 Certified">
+            <span class="hero-cert-badge"><img src="{{ asset('images/ISO_badge.png') }}" alt="ISO 9001:2015 Certified — V4Peace Counselling Centre"></span>
+            <span class="hero-cert-label">ISO 9001:2015<br>Certified</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -177,7 +189,20 @@
   }
   @media (max-width: 1399.98px) {
     .vp-home .hero-cert-float { left: 28px; gap: 20px; }
-    .vp-home .hero-cert-badge { width: 112px; height: 112px; flex: 0 0 112px; }
+    .vp-home .hero-cert-float .hero-cert-badge { width: 112px; height: 112px; flex: 0 0 112px; }
+  }
+
+  /* Inline badges for mobile/tablet (shown below the hero stats) */
+  .vp-home .hero-cert-inline {
+    justify-content: center; gap: 26px;
+    margin-top: 28px; padding-top: 22px;
+    border-top: 1px solid rgba(255,255,255,0.18);
+  }
+  .vp-home .hero-cert-inline .hero-cert-badge { width: 78px; height: 78px; flex: 0 0 78px; }
+  .vp-home .hero-cert-inline .hero-cert-label { font-size: 12px; }
+  @media (max-width: 359.98px) {
+    .vp-home .hero-cert-inline { gap: 16px; }
+    .vp-home .hero-cert-inline .hero-cert-badge { width: 62px; height: 62px; flex: 0 0 62px; }
   }
   .vp-home .hero-stat {
     display: flex; flex-direction: column; align-items: center;
@@ -207,7 +232,9 @@
 
   @media (max-width: 991px) {
     .vp-home .hero-title { font-size: 2.6rem; }
-    .vp-home .hero-content { padding-bottom: 70px; }
+    .vp-home .hero-content { padding-bottom: 40px; }
+    /* Let the hero grow to fit all content (incl. badges) instead of clipping at 100vh */
+    .vp-home .hero-wrap.hero-wrap { height: auto !important; min-height: 100vh; padding: 40px 0; }
   }
 </style>
 

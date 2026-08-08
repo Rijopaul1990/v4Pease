@@ -204,54 +204,11 @@
 
     onSelect: function (dateText, inst) {
         var counsellorId = $('#councellor_drop').val();
-
         if (!counsellorId) {
             vpAlert("Please select a counsellor first.");
             return;
         }
-
-        $.ajax({
-            url: '/admin/get-time-slots', // Laravel route
-            type: 'POST',
-            data: {
-                counsellor_id: counsellorId,
-                date: dateText,
-                _token: $('meta[name="csrf-token"]').attr('content') // CSRF token
-            },
-            success: function (response) {
-                if (response.status === 'success') {
-                    let timeArray = response.time_slots.split(',').map(item => item.trim()).filter(Boolean);
-                    let booked = (response.booked_slots || []).map(item => item.trim());
-
-                    if (choices) {
-                        choices.clearChoices(); // Clear old options
-                        choices.setChoices(
-                            timeArray.map(slot => {
-                                var isBooked = booked.indexOf(slot) !== -1;
-                                return {
-                                    value: slot,
-                                    label: isBooked ? (slot + '  —  Booked') : slot,
-                                    selected: false,
-                                    disabled: isBooked
-                                };
-                            }),
-                            'value',
-                            'label',
-                            false
-                        );
-                    }
-                } else {
-                    if (choices) {
-                      choices.clearChoices();
-                    }
-                    vpAlert("No time slots found for this date.");
-                }
-            },
-            error: function (xhr, status, error) {
-              debugger;
-                choices.clearChoices();
-            }
-        });
+        if (typeof window.vpFetchSlots === 'function') window.vpFetchSlots(counsellorId, dateText);
     }
 });
 
@@ -260,56 +217,123 @@
     });
   </script>
   <script>
-  $(document).ready(function(){
-    choices = new Choices('#choices-multiple-remove-button', {
-        removeItemButton: true,
-        maxItemCount: 12,
-        searchResultLimit: 5,
-        renderChoiceLimit: 12
-    });
-     // Step 1: Sort the options by time
-  const select = document.getElementById('choices-multiple-remove-button');
-  const options = Array.from(select.options);
+  $(document).ready(function () {
 
-  options.sort((a, b) => {
-    // Extract start times (like "10:00" from "10:00-10:30")
-    const getStartTime = (option) => {
-      const time = option.value.split('-')[0];
-      const [hours, minutes] = time.split(':').map(Number);
-      return hours * 60 + minutes; // convert to total minutes
+    // Convert a "hh:mm AM/PM" string to minutes since midnight
+    function toMinutes(timeStr) {
+        var parts = timeStr.trim().split(' ');
+        var hm = parts[0].split(':');
+        var h = parseInt(hm[0], 10);
+        var m = parseInt(hm[1], 10);
+        var mod = parts[1];
+        if (mod === 'PM' && h !== 12) h += 12;
+        if (mod === 'AM' && h === 12) h = 0;
+        return h * 60 + m;
+    }
+
+    window.calculateTotalHours = function (selectedTimes) {
+        var totalMinutes = 0;
+        selectedTimes.forEach(function (slot) {
+            var se = slot.split(' - ');
+            if (se.length === 2) {
+                totalMinutes += (toMinutes(se[1]) - toMinutes(se[0]));
+            }
+        });
+        return (totalMinutes / 60).toFixed(1);
     };
 
-    return getStartTime(a) - getStartTime(b);
-  });
+    // Currently selected slot values from the grid
+    window.vpGetSelectedSlots = function () {
+        return Array.prototype.slice.call(document.querySelectorAll('#slot-grid .vp-slot-selected'))
+            .map(function (b) { return b.getAttribute('data-slot'); });
+    };
 
-  // Step 2: Replace options in sorted order
-  select.innerHTML = '';
-  options.forEach(opt => select.appendChild(opt));
+    // Mirror selected slots into hidden inputs so they submit as time_slots[]
+    window.vpSyncSlots = function () {
+        var wrap = document.getElementById('slot-hidden-inputs');
+        if (!wrap) return;
+        wrap.innerHTML = '';
+        window.vpGetSelectedSlots().forEach(function (slot) {
+            var inp = document.createElement('input');
+            inp.type = 'hidden';
+            inp.name = 'time_slots[]';
+            inp.value = slot;
+            wrap.appendChild(inp);
+        });
+    };
 
-  // Step 3: Initialize Choices
-  // const multipleCancelButton = new Choices('#choices-multiple-remove-button', {
-  //   removeItemButton: false,
-  //   maxItemCount: 12,
-  //   searchResultLimit: 5,
-  //   renderChoiceLimit: 12
-  // });
-     document.querySelector('#choices-multiple-remove-button').addEventListener('change', function () {
-        var counsellorId = $('#councellor_drop').val();
-        if (!counsellorId) {
-            vpAlert("Please select a counsellor first.");
+    // Fetch available/booked slots for a counsellor + date and render the grid
+    window.vpFetchSlots = function (counsellorId, dateText) {
+        $.ajax({
+            url: '/admin/get-time-slots',
+            type: 'POST',
+            data: {
+                counsellor_id: counsellorId,
+                date: dateText,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                if (response.status === 'success') {
+                    var timeArray = response.time_slots.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+                    var booked = (response.booked_slots || []).map(function (s) { return s.trim(); });
+                    window.vpRenderSlots(timeArray, booked);
+                } else {
+                    window.vpRenderSlots([], []);
+                }
+                window.vpRecalcPrice();
+            },
+            error: function () {
+                window.vpRenderSlots([], []);
+                window.vpRecalcPrice();
+            }
+        });
+    };
+
+    // Render the available slots as a clickable grid (booked ones disabled)
+    window.vpRenderSlots = function (timeArray, booked) {
+        var grid = document.getElementById('slot-grid');
+        if (!grid) return;
+        booked = booked || [];
+        grid.innerHTML = '';
+
+        // sort by start time so the grid reads chronologically
+        timeArray = (timeArray || []).slice().sort(function (a, b) {
+            return toMinutes(a.split(' - ')[0]) - toMinutes(b.split(' - ')[0]);
+        });
+
+        if (!timeArray.length) {
+            grid.innerHTML = '<span class="vp-slot-empty">No time slots available for this date.</span>';
+            window.vpSyncSlots();
             return;
         }
-        vpRecalcPrice();
-     });
+
+        timeArray.forEach(function (slot) {
+            var isBooked = booked.indexOf(slot) !== -1;
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'vp-slot' + (isBooked ? ' vp-slot-booked' : '');
+            btn.setAttribute('data-slot', slot);
+            btn.innerHTML = isBooked ? (slot + '<small>Booked</small>') : slot;
+            if (isBooked) {
+                btn.disabled = true;
+            } else {
+                btn.addEventListener('click', function () {
+                    btn.classList.toggle('vp-slot-selected');
+                    window.vpSyncSlots();
+                    window.vpRecalcPrice();
+                });
+            }
+            grid.appendChild(btn);
+        });
+        window.vpSyncSlots();
+    };
 
     // Reusable price calculation — factors in the selected candidate type (Adult/Child).
-    // Exposed globally so the booking page can trigger it when the candidate type changes.
     window.vpRecalcPrice = function () {
-        var select = document.getElementById('choices-multiple-remove-button');
-        if (!select) return;
+        if (!document.getElementById('slot-grid')) return;
 
-        var selected = Array.from(select.selectedOptions).map(function (opt) { return opt.value; });
-        var totalHours = calculateTotalHours(selected);
+        var selected = window.vpGetSelectedSlots();
+        var totalHours = window.calculateTotalHours(selected);
         var counsellorId = $('#councellor_drop').val();
         var candidateType = $('#candidate_type').length ? $('#candidate_type').val() : 'Adult';
 
@@ -344,25 +368,6 @@
         });
     };
 
-function calculateTotalHours(selectedTimes) {
-    let totalMinutes = 0;
-
-    selectedTimes.forEach(slot => {
-        const [start, end] = slot.split(' - ').map(timeStr => {
-            const [time, modifier] = timeStr.trim().split(' ');
-            let [hours, minutes] = time.split(':').map(Number);
-            if (modifier === 'PM' && hours !== 12) hours += 12;
-            if (modifier === 'AM' && hours === 12) hours = 0;
-            return hours * 60 + minutes;
-        });
-
-        totalMinutes += (end - start);
-    });
-
-    return (totalMinutes / 60).toFixed(1); // return hours with 1 decimal
-}
-
-     
  });
  </script>
 </body>

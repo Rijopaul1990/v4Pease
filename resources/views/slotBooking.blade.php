@@ -133,23 +133,55 @@
        box-shadow: 0 12px 28px rgba(92, 53, 53, 0.3);
    }
 
-   /* Choices.js theming to match brand */
-   .vp-booking .choices__inner { border-radius: 10px; border: 1px solid #e4d9d6; background: #fffdfc; }
-   .vp-booking .choices__list--multiple .choices__item {
+   /* Time-slot selectable grid */
+   .vp-booking .vp-slot-grid {
+       display: grid;
+       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+       gap: 12px;
+       margin-top: 6px;
+   }
+   .vp-booking .vp-slot {
+       border: 1px solid #e4d9d6;
+       background: #fffdfc;
+       color: #4a3838;
+       border-radius: 12px;
+       padding: 12px 8px;
+       font-size: 14px;
+       font-weight: 500;
+       cursor: pointer;
+       transition: all .18s ease;
+       text-align: center;
+       line-height: 1.25;
+   }
+   .vp-booking .vp-slot:hover {
+       border-color: var(--vp-brand);
+       color: var(--vp-brand-dark);
+       box-shadow: 0 4px 12px rgba(123,74,74,0.12);
+   }
+   .vp-booking .vp-slot-selected,
+   .vp-booking .vp-slot-selected:hover {
        background: var(--vp-brand);
-       border: 1px solid var(--vp-brand-dark);
-       border-radius: 20px;
+       border-color: var(--vp-brand-dark);
+       color: #fff;
+       box-shadow: 0 6px 16px rgba(123,74,74,0.28);
    }
-   /* Already-booked slots: greyed out, struck, not selectable */
-   .choices__list--dropdown .choices__item--disabled,
-   .choices__list[aria-expanded] .choices__item--disabled {
-       opacity: 1 !important;
-       color: #b0a0a0 !important;
-       background: #f6efec !important;
-       cursor: not-allowed !important;
+   .vp-booking .vp-slot-selected::after {
+       content: "\2713"; margin-left: 6px; font-weight: 700;
+   }
+   .vp-booking .vp-slot-booked,
+   .vp-booking .vp-slot-booked:hover {
+       background: #f6efec;
+       color: #b0a0a0;
+       border-style: dashed;
+       border-color: #e0d3cf;
+       cursor: not-allowed;
+       box-shadow: none;
        text-decoration: line-through;
-       font-style: italic;
    }
+   .vp-booking .vp-slot-booked small {
+       display: block; text-decoration: none; font-size: 10.5px; font-style: italic; margin-top: 2px;
+   }
+   .vp-booking .vp-slot-empty { color: #9a8888; font-size: 14px; }
 
    .scroller { scroll-margin-top: 100px; }
 
@@ -194,9 +226,9 @@
                 <h3>Session Details<small>Pick your counsellor, date &amp; time</small></h3>
             </div>
 
-            <!-- Counselor, Date, Time -->
+            <!-- Counselor, Date -->
             <div class="form-row">
-                <div class="col-md-4 mb-3">
+                <div class="col-md-6 mb-3">
                     <label for="councellor_drop">Select Counsellor <span class="text-danger">*</span></label>
                     <select class="form-control" id="councellor_drop" name="counsellor_id" required>
                         <option value="">Select Counsellor</option>
@@ -207,16 +239,21 @@
                     <small id="counsellor_hint" class="text-muted d-block mt-1">Please select a counsellor to continue.</small>
                 </div>
 
-                <div class="col-md-4 mb-3">
+                <div class="col-md-6 mb-3">
                     <label for="datepicker2">Choose Your Date <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="datepicker2" name="session_date" placeholder="Select date" readonly required>
                 </div>
+            </div>
 
-                <div class="col-md-4 mb-3">
-                    <label for="choices-multiple-remove-button">Select Time Slot <span class="text-danger">*</span></label>
-                    {{-- Options are populated via AJAX (layout script) once a counsellor and date are chosen. --}}
-                    <select id="choices-multiple-remove-button" name="time_slots[]" placeholder="Select a counsellor and date first" multiple required>
-                    </select>
+            <!-- Time Slots (clickable grid) -->
+            <div class="form-row">
+                <div class="col-12 mb-3">
+                    <label>Select Time Slot(s) <span class="text-danger">*</span></label>
+                    <div id="slot-grid" class="vp-slot-grid">
+                        <span class="vp-slot-empty">Select a counsellor and a date to see available time slots.</span>
+                    </div>
+                    {{-- Selected slots are injected here as hidden inputs (time_slots[]) --}}
+                    <div id="slot-hidden-inputs"></div>
                 </div>
             </div>
 
@@ -421,10 +458,13 @@
                 var el = document.getElementById(id);
                 if (el) el.disabled = !enabled;
             });
-            // Choices.js time-slot control
-            if (window.choices) {
-                try { enabled ? choices.enable() : choices.disable(); } catch (e) {}
-            }
+        }
+
+        function vpResetSlotGrid() {
+            var grid = document.getElementById('slot-grid');
+            if (grid) grid.innerHTML = '<span class="vp-slot-empty">Select a counsellor and a date to see available time slots.</span>';
+            if (typeof window.vpSyncSlots === 'function') window.vpSyncSlots();
+            if (typeof window.vpRecalcPrice === 'function') window.vpRecalcPrice();
         }
 
         function vpUpdateGate() {
@@ -435,8 +475,32 @@
         }
 
         if (counsellorEl) counsellorEl.addEventListener('change', vpUpdateGate);
-        vpUpdateGate();                 // lock everything on load
-        setTimeout(vpUpdateGate, 900);  // re-apply after Choices finishes initialising
+        vpUpdateGate(); // lock everything on load
+
+        // When the counsellor changes, refresh slots for the already-chosen date (or reset the grid)
+        if (counsellorEl) {
+            counsellorEl.addEventListener('change', function () {
+                var dateVal = document.getElementById('datepicker2').value;
+                if (counsellorEl.value && dateVal && typeof window.vpFetchSlots === 'function') {
+                    window.vpFetchSlots(counsellorEl.value, dateVal);
+                } else {
+                    vpResetSlotGrid();
+                }
+            });
+        }
+
+        // Require at least one time slot before submitting
+        var bookingForm = document.querySelector('form[action$="/saveBookingData"]');
+        if (bookingForm) {
+            bookingForm.addEventListener('submit', function (e) {
+                var count = (typeof window.vpGetSelectedSlots === 'function') ? window.vpGetSelectedSlots().length : 0;
+                if (count === 0) {
+                    e.preventDefault();
+                    if (typeof window.vpAlert === 'function') { vpAlert('Please select at least one time slot.'); }
+                    else { alert('Please select at least one time slot.'); }
+                }
+            });
+        }
     });
 </script>
 

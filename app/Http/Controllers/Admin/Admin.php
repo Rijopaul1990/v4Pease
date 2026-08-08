@@ -12,6 +12,7 @@ use App\Blog;
 use App\CareerApplication;
 use App\SocialPost;
 use App\Payment;
+use App\Quotation;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
@@ -227,6 +228,12 @@ class Admin extends Controller
         }
 
         return view('Admin.bookings', compact('counsellors', 'upcoming', 'completed', 'counsellorId'));
+    }
+
+    public function quotations()
+    {
+        $quotations = Quotation::orderBy('id', 'desc')->paginate(15);
+        return view('Admin.quotations', compact('quotations'));
     }
 
     public function addSocialPost()

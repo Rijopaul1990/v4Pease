@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\LoginController;
 Route::group(['middleware'=>'user_auth'], function(){
    Route::get('/home', [admin::class, 'index'])->name('home');
     Route::get('/bookings', [admin::class, 'bookings'])->name('admin.bookings');
+    Route::get('/quotations', [admin::class, 'quotations'])->name('admin.quotations');
     Route::get('/addcouncelor', [admin::class, 'addcouncelor'])->name('admin.addcouncelor');
     Route::get('/viewCounsellors', [admin::class, 'viewCounsellors'])->name('admin.viewCounsellors');
     Route::get('/counsellor/edit/{id}', [admin::class, 'editCounsellor'])->name('admin.counsellor.edit');

@@ -7,6 +7,7 @@ use App\Http\Controllers\RazorpayController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\QuotationController;
 use App\Blog;
 use App\SocialPost;
 
@@ -72,6 +73,8 @@ Route::post('/career/submit', [CareerController::class, 'submit'])->name('career
 Route::get('/contactus', function () {
     return view('contactus');
 });
+
+Route::post('/quotation/send', [QuotationController::class, 'send'])->name('quotation.send');
 
 Route::post('/contact/send', [ContactController::class, 'sendMessage'])->name('contact.send');
 Route::post('/contact/send-page', [ContactController::class, 'sendMessageFromPage'])->name('contact.send.page');
